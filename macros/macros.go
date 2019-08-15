@@ -22,7 +22,7 @@ const (
 	DfltMEnd   = "}"
 )
 
-// M records the information needed to substitute macros
+// Cache records the information needed to substitute macros
 //
 // You should create a new Macros object with New and then if you want to
 // read any macros from files in macro directories then add the
@@ -33,7 +33,7 @@ const (
 //
 // You can then use Find to get the text representing the macro or
 // use Substitute to replace any macro names in the passed line
-type M struct {
+type Cache struct {
 	mMap     map[string]string
 	mDirs    []string
 	suffixes []string
@@ -41,11 +41,11 @@ type M struct {
 	mEnd     string
 }
 
-type OptFunc func(m *M) error
+type OptFunc func(c *Cache) error
 
-// New creates a new M object.
-func New(opts ...OptFunc) (*M, error) {
-	m := &M{
+// NewCache creates a new Cache object.
+func NewCache(opts ...OptFunc) (*Cache, error) {
+	c := &Cache{
 		mMap:     make(map[string]string),
 		mDirs:    make([]string, 0),
 		suffixes: []string{""},
@@ -54,12 +54,12 @@ func New(opts ...OptFunc) (*M, error) {
 	}
 
 	for _, o := range opts {
-		if err := o(m); err != nil {
+		if err := o(c); err != nil {
 			return nil, err
 		}
 	}
 
-	return m, nil
+	return c, nil
 }
 
 // Dirs returns an OptFunc that will add the directory names to the,
@@ -67,7 +67,7 @@ func New(opts ...OptFunc) (*M, error) {
 // values must be a directory, an error will be returned if not and none of
 // the passed values will be added.
 func Dirs(dirs ...string) OptFunc {
-	return func(m *M) error {
+	return func(c *Cache) error {
 		if len(dirs) == 0 {
 			return fmt.Errorf("at least one macros directory must be passed")
 		}
@@ -83,7 +83,7 @@ func Dirs(dirs ...string) OptFunc {
 			}
 		}
 
-		m.mDirs = append(m.mDirs, dirs...)
+		c.mDirs = append(c.mDirs, dirs...)
 		return nil
 	}
 }
@@ -94,8 +94,8 @@ func Dirs(dirs ...string) OptFunc {
 // are added and there is always a first, empty suffix so that a macro name
 // will always match a file with the exact same name.
 func Suffix(suffix string) OptFunc {
-	return func(m *M) error {
-		m.suffixes = append(m.suffixes, suffix)
+	return func(c *Cache) error {
+		c.suffixes = append(c.suffixes, suffix)
 
 		return nil
 	}
@@ -106,9 +106,9 @@ func Suffix(suffix string) OptFunc {
 // Substitute to find the macro. The default values are given by DfltMStart
 // and DfltMEnd
 func StartEndStr(start, end string) OptFunc {
-	return func(m *M) error {
-		m.mStart = start
-		m.mEnd = end
+	return func(c *Cache) error {
+		c.mStart = start
+		c.mEnd = end
 
 		return nil
 	}
@@ -116,35 +116,35 @@ func StartEndStr(start, end string) OptFunc {
 
 // AddMacro will add a named macro to the macro map which can
 // subsequently be used to substitute into a string
-func (m *M) AddMacro(name, value string) {
-	m.mMap[name] = value
+func (c *Cache) AddMacro(name, value string) {
+	c.mMap[name] = value
 }
 
 // Find searches for the macro name in the cache. If it is not found and
 // there are macro directories to be searched then it will search for a
 // matching file name and returns the contents if it finds it. If no matching
 // macro is found an error is returned
-func (m *M) Find(mName string, loc *location.L) (string, error) {
-	if macro, ok := m.mMap[mName]; ok {
+func (c *Cache) Find(mName string, loc *location.L) (string, error) {
+	if macro, ok := c.mMap[mName]; ok {
 		return macro, nil
 	}
 
-	for _, fd := range m.mDirs {
-		for _, suffix := range m.suffixes {
+	for _, fd := range c.mDirs {
+		for _, suffix := range c.suffixes {
 			macro, err := ioutil.ReadFile(filepath.Join(fd, mName+suffix))
 			if err == nil {
-				m.mMap[mName] = string(macro)
-				return m.mMap[mName], nil
+				c.mMap[mName] = string(macro)
+				return c.mMap[mName], nil
 			}
 		}
 	}
 
 	errStr := fmt.Sprintf("Macro '%s' at %s was not found", mName, loc)
-	if len(m.mDirs) == 1 {
-		errStr += " in the macro directory: " + m.mDirs[0]
-	} else if len(m.mDirs) > 1 {
+	if len(c.mDirs) == 1 {
+		errStr += " in the macro directory: " + c.mDirs[0]
+	} else if len(c.mDirs) > 1 {
 		errStr += " in any of the macro directories: " +
-			strings.Join(m.mDirs, ", ")
+			strings.Join(c.mDirs, ", ")
 	}
 
 	return "", errors.New(errStr)
@@ -156,27 +156,27 @@ func (m *M) Find(mName string, loc *location.L) (string, error) {
 // then an error is returned. A macro is a string between the macro start and
 // end strings (see DfltMStart and DfltMEnd). Macros do not nest. There can
 // be any number of macros on a line
-func (m *M) Substitute(line string, loc *location.L) (string, error) {
-	parts := strings.SplitN(line, m.mStart, 2)
+func (c *Cache) Substitute(line string, loc *location.L) (string, error) {
+	parts := strings.SplitN(line, c.mStart, 2)
 	line = parts[0]
 	for len(parts) == 2 {
-		parts = strings.SplitN(parts[1], m.mEnd, 2)
+		parts = strings.SplitN(parts[1], c.mEnd, 2)
 
 		if len(parts) != 2 {
 			err :=
 				fmt.Errorf("Bad macro at %s:"+
 					" a macro was started with '%s'"+
 					" but not finished with '%s'",
-					loc, m.mStart, m.mEnd)
+					loc, c.mStart, c.mEnd)
 			return "", err
 		}
-		macro, err := m.Find(parts[0], loc)
+		macro, err := c.Find(parts[0], loc)
 		if err != nil {
 			return "", err
 		}
 		line += macro
 
-		parts = strings.SplitN(parts[1], m.mStart, 2)
+		parts = strings.SplitN(parts[1], c.mStart, 2)
 		line += parts[0]
 	}
 	return line, nil

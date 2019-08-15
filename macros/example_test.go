@@ -14,7 +14,7 @@ func Example_withDirs() {
 		"testdata/macros1",
 		"testdata/macros2",
 	}
-	m, err := macros.New(macros.Dirs(dirs...), macros.Suffix(".xxx"))
+	m, err := macros.NewCache(macros.Dirs(dirs...), macros.Suffix(".xxx"))
 	if err != nil {
 		fmt.Printf("Unexpected error creating a new macro cache")
 		return
@@ -44,7 +44,7 @@ func Example_withDirs() {
 // Example_withoutDirs demonstrates how the macros package might be used
 // without any macros directories
 func Example_withoutDirs() {
-	m, err := macros.New()
+	m, err := macros.NewCache()
 	if err != nil {
 		fmt.Printf("Unexpected error creating a new macro cache")
 		return
