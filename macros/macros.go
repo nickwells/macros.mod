@@ -7,7 +7,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/nickwells/check.mod/check"
 	"github.com/nickwells/filecheck.mod/filecheck"
 	"github.com/nickwells/location.mod/location"
 )
@@ -72,10 +71,7 @@ func Dirs(dirs ...string) OptFunc {
 			return fmt.Errorf("at least one macros directory must be passed")
 		}
 
-		es := filecheck.Provisos{
-			Checks:    []check.FileInfo{check.FileInfoIsDir},
-			Existence: filecheck.MustExist,
-		}
+		es := filecheck.DirExists()
 		for _, dir := range dirs {
 			err := es.StatusCheck(dir)
 			if err != nil {
