@@ -3,6 +3,6 @@ module github.com/nickwells/macros.mod
 go 1.12
 
 require (
-	github.com/nickwells/filecheck.mod v1.1.1
-	github.com/nickwells/location.mod v1.2.7
+	github.com/nickwells/filecheck.mod v1.1.2
+	github.com/nickwells/location.mod v1.2.9
 )
