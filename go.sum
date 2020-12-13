@@ -2,7 +2,7 @@ github.com/nickwells/check.mod v1.6.11 h1:P3PeDAixvA4htSBqvavcLNyGLDqvJhjbYS/u1p
 github.com/nickwells/check.mod v1.6.11/go.mod h1:JbIU1ufIWN6hdqMDurUxXNv4SbvnfOPW9jbIIQgEhSM=
 github.com/nickwells/filecheck.mod v1.1.7 h1:O+VqEOBpjaOjjQ0eQveZSqfMQQARcMd20aLa+ugkBL4=
 github.com/nickwells/filecheck.mod v1.1.7/go.mod h1:1VCTmvvq23v3PUic/1yvf03bARfeb2AXtSN7uTQ1+AM=
-github.com/nickwells/location.mod v1.2.14 h1:2PhqaXSw1VUfbMkOUmBgpzdDlqfxuQIyYNXu/445YHg=
-github.com/nickwells/location.mod v1.2.14/go.mod h1:QRxuYxX2f/7xrRr2SSu7a4WBPAw7gLvXt7XI37us2yQ=
+github.com/nickwells/location.mod v1.2.15 h1:jIg2GUL21M7Fw3h3qgbnGYFo+3VJA1DeH6oHE9kBcro=
+github.com/nickwells/location.mod v1.2.15/go.mod h1:QRxuYxX2f/7xrRr2SSu7a4WBPAw7gLvXt7XI37us2yQ=
 github.com/nickwells/testhelper.mod v1.12.1 h1:PqgnUVCFiuYxSwRs7grmxRethIp5/FDKZrllWscSKJs=
 github.com/nickwells/testhelper.mod v1.12.1/go.mod h1:Ct/U2PjL0n9hGc+US6uR/s4NxSRI33NM+0ZkrDkG0XI=
