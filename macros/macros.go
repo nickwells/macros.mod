@@ -3,7 +3,7 @@ package macros
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"path/filepath"
 	"strings"
 
@@ -127,7 +127,7 @@ func (c *Cache) Find(mName string, loc *location.L) (string, error) {
 
 	for _, fd := range c.mDirs {
 		for _, suffix := range c.suffixes {
-			macro, err := ioutil.ReadFile(filepath.Join(fd, mName+suffix))
+			macro, err := os.ReadFile(filepath.Join(fd, mName+suffix))
 			if err == nil {
 				c.mMap[mName] = string(macro)
 				return c.mMap[mName], nil
