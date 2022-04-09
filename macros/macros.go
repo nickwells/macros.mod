@@ -159,11 +159,10 @@ func (c *Cache) Substitute(line string, loc *location.L) (string, error) {
 		parts = strings.SplitN(parts[1], c.mEnd, 2)
 
 		if len(parts) != 2 {
-			err :=
-				fmt.Errorf("Bad macro at %s:"+
-					" a macro was started with '%s'"+
-					" but not finished with '%s'",
-					loc, c.mStart, c.mEnd)
+			err := fmt.Errorf("Bad macro at %s:"+
+				" a macro was started with '%s'"+
+				" but not finished with '%s'",
+				loc, c.mStart, c.mEnd)
 			return "", err
 		}
 		macro, err := c.Find(parts[0], loc)
