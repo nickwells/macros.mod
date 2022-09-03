@@ -1,5 +1,4 @@
 /*
-
 The macros package can be used to replace parts of a string with the contents
 of macro files held in one of a set of directories. You construct the M
 object and then call the Substitute method on each string that you wish to
@@ -13,6 +12,5 @@ cache or in the macro directories is reported as an error.
 
 Alternatively macro values can be set directly and no macro directories
 are needed.
-
 */
 package macros
