@@ -75,5 +75,5 @@ func Example_withoutDirs() {
 	// Error: Macro 'XXX' at strSlice:2 was not found
 	// Changed or Substituted
 	// Changed and Changed again
-	// Error: Bad macro at strSlice:5: a macro was started with '${' but not finished with '}'
+	// Error: bad macro at strSlice:5: a macro was started with '${' but not finished with '}'
 }

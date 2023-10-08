@@ -159,7 +159,7 @@ func (c *Cache) Substitute(line string, loc *location.L) (string, error) {
 		parts = strings.SplitN(parts[1], c.mEnd, 2)
 
 		if len(parts) != 2 {
-			err := fmt.Errorf("Bad macro at %s:"+
+			err := fmt.Errorf("bad macro at %s:"+
 				" a macro was started with '%s'"+
 				" but not finished with '%s'",
 				loc, c.mStart, c.mEnd)
@@ -175,4 +175,10 @@ func (c *Cache) Substitute(line string, loc *location.L) (string, error) {
 		line += parts[0]
 	}
 	return line, nil
+}
+
+// GetStartEndStrings returns the start and end strings (which bracket the
+// macro name)
+func (c Cache) GetStartEndStrings() (string, string) {
+	return c.mStart, c.mEnd
 }
