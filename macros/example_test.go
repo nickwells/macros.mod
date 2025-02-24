@@ -14,6 +14,7 @@ func Example_withDirs() {
 		"testdata/macros1",
 		"testdata/macros2",
 	}
+
 	m, err := macros.NewCache(macros.Dirs(dirs...), macros.Suffix(".xxx"))
 	if err != nil {
 		fmt.Printf("Unexpected error creating a new macro cache")
@@ -25,20 +26,24 @@ func Example_withDirs() {
 		"${f2}",
 		"${XXX}",
 	}
+
 	loc := location.New("strSlice")
+
 	for _, str := range strs {
 		loc.Incr()
+
 		newStr, err := m.Substitute(str, loc)
 		if err != nil {
 			fmt.Println("Error:", err)
 			continue
 		}
+
 		fmt.Println(newStr)
 	}
 	// Output:
 	// The contents of f1
 	// The contents of f2.xxx
-	// Error: Macro 'XXX' at strSlice:3 was not found in any of the macro directories: testdata/macros1, testdata/macros2
+	// Error: Macro "XXX" at strSlice:3 was not found in any of the macro directories: testdata/macros1, testdata/macros2
 }
 
 // Example_withoutDirs demonstrates how the macros package might be used
@@ -49,6 +54,7 @@ func Example_withoutDirs() {
 		fmt.Printf("Unexpected error creating a new macro cache")
 		return
 	}
+
 	m.AddMacro("f1", "Replaced")
 	m.AddMacro("f2", "Changed")
 	m.AddMacro("f3", "Substituted")
@@ -60,20 +66,24 @@ func Example_withoutDirs() {
 		"${f2} and ${f2} again",
 		"Whoops: Bad syntax ${f1",
 	}
+
 	loc := location.New("strSlice")
+
 	for _, str := range strs {
 		loc.Incr()
+
 		newStr, err := m.Substitute(str, loc)
 		if err != nil {
 			fmt.Println("Error:", err)
 			continue
 		}
+
 		fmt.Println(newStr)
 	}
 	// Output:
 	// Here is the macro to be Replaced
-	// Error: Macro 'XXX' at strSlice:2 was not found
+	// Error: Macro "XXX" at strSlice:2 was not found
 	// Changed or Substituted
 	// Changed and Changed again
-	// Error: bad macro at strSlice:5: a macro was started with '${' but not finished with '}'
+	// Error: strSlice:5: a macro was started with "${" but not finished with "}"
 }

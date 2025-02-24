@@ -80,6 +80,7 @@ func Dirs(dirs ...string) OptFunc {
 		}
 
 		c.mDirs = append(c.mDirs, dirs...)
+
 		return nil
 	}
 }
