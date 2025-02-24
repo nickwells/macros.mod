@@ -135,7 +135,7 @@ func (c *Cache) Find(mName string, loc *location.L) (string, error) {
 		}
 	}
 
-	errStr := fmt.Sprintf("Macro '%s' at %s was not found", mName, loc)
+	errStr := fmt.Sprintf("Macro %q at %s was not found", mName, loc)
 	if len(c.mDirs) == 1 {
 		errStr += " in the macro directory: " + c.mDirs[0]
 	} else if len(c.mDirs) > 1 {
