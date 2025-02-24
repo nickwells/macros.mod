@@ -1,6 +1,6 @@
 module github.com/nickwells/macros.mod
 
-go 1.21
+go 1.24
 
 require (
 	github.com/nickwells/filecheck.mod v1.2.0
