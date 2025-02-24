@@ -153,28 +153,30 @@ func (c *Cache) Find(mName string, loc *location.L) (string, error) {
 // end strings (see DfltMStart and DfltMEnd). Macros do not nest. There can
 // be any number of macros on a line
 func (c *Cache) Substitute(line string, loc *location.L) (string, error) {
-	parts := strings.SplitN(line, c.mStart, 2)
-	line = parts[0]
-	for len(parts) == 2 {
-		parts = strings.SplitN(parts[1], c.mEnd, 2)
+	plainText, macroEtc, macroFound := strings.Cut(line, c.mStart)
+	expandedLine := plainText
 
-		if len(parts) != 2 {
-			err := fmt.Errorf("bad macro at %s:"+
-				" a macro was started with '%s'"+
-				" but not finished with '%s'",
+	for macroFound {
+		macroName, remainder, macroTerminated := strings.Cut(macroEtc, c.mEnd)
+		if !macroTerminated {
+			err := fmt.Errorf(
+				"%s: a macro was started with %q but not finished with %q",
 				loc, c.mStart, c.mEnd)
+
 			return "", err
 		}
-		macro, err := c.Find(parts[0], loc)
+
+		macro, err := c.Find(macroName, loc)
 		if err != nil {
 			return "", err
 		}
-		line += macro
 
-		parts = strings.SplitN(parts[1], c.mStart, 2)
-		line += parts[0]
+		expandedLine += macro
+		plainText, macroEtc, macroFound = strings.Cut(remainder, c.mStart)
+		expandedLine += plainText
 	}
-	return line, nil
+
+	return expandedLine, nil
 }
 
 // GetStartEndStrings returns the start and end strings (which bracket the
