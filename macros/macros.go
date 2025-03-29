@@ -33,11 +33,12 @@ const (
 // You can then use Find to get the text representing the macro or
 // use Substitute to replace any macro names in the passed line
 type Cache struct {
-	mMap     map[string]string
-	mDirs    []string
-	suffixes []string
-	mStart   string
-	mEnd     string
+	mMap      map[string]string
+	badMacros map[string]bool
+	mDirs     []string
+	suffixes  []string
+	mStart    string
+	mEnd      string
 }
 
 // OptFunc is the type of a function used to set options on a macro Cache
@@ -46,11 +47,12 @@ type OptFunc func(c *Cache) error
 // NewCache creates a new Cache object.
 func NewCache(opts ...OptFunc) (*Cache, error) {
 	c := &Cache{
-		mMap:     make(map[string]string),
-		mDirs:    make([]string, 0),
-		suffixes: []string{""},
-		mStart:   DfltMStart,
-		mEnd:     DfltMEnd,
+		mMap:      make(map[string]string),
+		badMacros: make(map[string]bool),
+		mDirs:     make([]string, 0),
+		suffixes:  []string{""},
+		mStart:    DfltMStart,
+		mEnd:      DfltMEnd,
 	}
 
 	for _, o := range opts {
@@ -127,9 +129,14 @@ func (c *Cache) Find(mName string, loc *location.L) (string, error) {
 		return macro, nil
 	}
 
+	if c.badMacros[mName] {
+		return "", fmt.Errorf("macro %q at %s was not found", mName, loc)
+	}
+
 	for _, fd := range c.mDirs {
 		for _, suffix := range c.suffixes {
-			macro, err := os.ReadFile(filepath.Join(fd, mName+suffix))
+			macro, err := os.ReadFile( //nolint:gosec
+				filepath.Join(fd, mName+suffix))
 			if err == nil {
 				c.mMap[mName] = string(macro)
 				return c.mMap[mName], nil
@@ -137,7 +144,9 @@ func (c *Cache) Find(mName string, loc *location.L) (string, error) {
 		}
 	}
 
-	errStr := fmt.Sprintf("Macro %q at %s was not found", mName, loc)
+	c.badMacros[mName] = true
+
+	errStr := fmt.Sprintf("macro %q at %s was not found", mName, loc)
 	if len(c.mDirs) == 1 {
 		errStr += " in the macro directory: " + c.mDirs[0]
 	} else if len(c.mDirs) > 1 {

@@ -43,7 +43,7 @@ func Example_withDirs() {
 	// Output:
 	// The contents of f1
 	// The contents of f2.xxx
-	// Error: Macro "XXX" at strSlice:3 was not found in any of the macro directories: testdata/macros1, testdata/macros2
+	// Error: macro "XXX" at strSlice:3 was not found in any of the macro directories: testdata/macros1, testdata/macros2
 }
 
 // Example_withoutDirs demonstrates how the macros package might be used
@@ -82,7 +82,7 @@ func Example_withoutDirs() {
 	}
 	// Output:
 	// Here is the macro to be Replaced
-	// Error: Macro "XXX" at strSlice:2 was not found
+	// Error: macro "XXX" at strSlice:2 was not found
 	// Changed or Substituted
 	// Changed and Changed again
 	// Error: strSlice:5: a macro was started with "${" but not finished with "}"
