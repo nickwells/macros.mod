@@ -40,6 +40,7 @@ type Cache struct {
 	mEnd     string
 }
 
+// OptFunc is the type of a function used to set options on a macro Cache
 type OptFunc func(c *Cache) error
 
 // NewCache creates a new Cache object.

@@ -1,5 +1,5 @@
 /*
-The macros package can be used to replace parts of a string with the contents
+Package macros can be used to replace parts of a string with the contents
 of macro files held in one of a set of directories. You construct the M
 object and then call the Substitute method on each string that you wish to
 expand. This will find all the sub-strings bracketed with the macro start and
