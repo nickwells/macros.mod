@@ -165,7 +165,9 @@ func (c *Cache) Find(mName string, loc *location.L) (string, error) {
 // be any number of macros on a line
 func (c *Cache) Substitute(line string, loc *location.L) (string, error) {
 	plainText, macroEtc, macroFound := strings.Cut(line, c.mStart)
-	expandedLine := plainText
+
+	var expandedLine strings.Builder
+	expandedLine.WriteString(plainText)
 
 	for macroFound {
 		macroName, remainder, macroTerminated := strings.Cut(macroEtc, c.mEnd)
@@ -182,12 +184,14 @@ func (c *Cache) Substitute(line string, loc *location.L) (string, error) {
 			return "", err
 		}
 
-		expandedLine += macro
+		expandedLine.WriteString(macro)
+
 		plainText, macroEtc, macroFound = strings.Cut(remainder, c.mStart)
-		expandedLine += plainText
+
+		expandedLine.WriteString(plainText)
 	}
 
-	return expandedLine, nil
+	return expandedLine.String(), nil
 }
 
 // GetStartEndStrings returns the start and end strings (which bracket the
